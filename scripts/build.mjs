@@ -24,27 +24,23 @@ const name = 'Rishikesh S';
 const handle = 'rkeshs';
 const tagline = ['Full-stack engineer.', 'TypeScript, fast backends, practical AI workflows.'];
 
-// The terminal window: a few plain facts, next to an ASCII hillside.
-const facts = [
-  ['role', 'full-stack engineer'],
-  ['based in', 'india'],
-  ['likes', 'reliable software, clean dev workflows'],
-  ['ships', 'products that survive real users'],
-  ['editor', 'zed'],
-  ['ask me', 'system design, ai agents, why typescript'],
-  ['site', 'rishikeshs.net'],
-];
-const art = [
-  '     .       *        .   ',
-  '  *      /\\       .       ',
-  '        /  \\         *    ',
-  '   /\\  /    \\    /\\       ',
-  '  /  \\/      \\  /  \\      ',
-  ' /    \\       \\/    \\     ',
-  '/      \\      /      \\    ',
-  '  ^  ^   ^  ^    ^  ^   ^ ',
-  ' ^^^^^^ ^^^^^^  ^^^^^ ^^^^',
-];
+// The terminal window: a git log of the landscape itself.
+// Each line is graph characters, then a hash, an optional (ref), and a message.
+const session = {
+  dir: '~/hill',
+  command: 'git log --graph --oneline',
+  lines: [
+    '* 9f3c2a1 (main) feat: add a fox, tell no one',
+    '* 5b7e0d4 fix: stars no longer render at noon',
+    '*   3ad91c2 merge: clouds into sky',
+    '|\\',
+    '| * c41a9e8 chore: drift left, then right, forever',
+    '|/',
+    '* a8830bc feat: ship the moon behind dark mode',
+    '* e02d7f6 perf: plant the pines once, not per frame',
+    '* 77d1f09 init: one hill, some grain',
+  ],
+};
 
 // Each group has its own tile colour. [label, icon key in scripts/icons.json]
 const groups = [
@@ -295,8 +291,6 @@ function landscape(layout, rand) {
 
 // --------------------------------------------------------------- terminal
 
-const artColor = (ch) => (ch === '^' ? '#86A872' : ch === '*' || ch === '.' ? '#F1DFA0' : '#A9A2CC');
-
 function terminal(t) {
   const out = [];
   const cw = t.size * 0.6; // DM Mono is 0.6em wide
@@ -309,53 +303,32 @@ function terminal(t) {
   );
   out.push(`<rect x="${t.x + 0.5}" y="${t.y + 0.5}" width="${t.w - 1}" height="${t.h - 1}" rx="${t.r}" fill="none" style="stroke:var(--termline)"/>`);
   for (let i = 0; i < 3; i++) out.push(`<circle cx="${t.x + 24 + i * 21}" cy="${t.y + t.bar / 2}" r="6.5" fill="#4A524C"/>`);
-  out.push(`<text class="mono" x="${t.x + t.w / 2}" y="${t.y + t.bar / 2 + 5}" font-size="${t.size - 2}" text-anchor="middle" style="fill:#8D958C">about</text>`);
+  out.push(`<text class="mono" x="${t.x + t.w / 2}" y="${t.y + t.bar / 2 + 5}" font-size="${t.size - 2}" text-anchor="middle" style="fill:#8D958C">${esc(session.dir)}</text>`);
 
   const x = t.x + t.pad;
   let y = t.y + t.bar + t.pad + t.size * 0.8;
-  const prompt = (cmd) =>
-    `<text class="mono" x="${x}" y="${n(y)}" font-size="${t.size}"><tspan fill="#9DBB88">${esc(handle)}@github</tspan><tspan fill="#8D958C">:~$</tspan><tspan fill="#EDE8DA"> ${esc(cmd)}</tspan></text>`;
-  out.push(prompt('about'));
-  y += t.lead * 1.5;
+  const span = (color, text) => (text ? `<tspan fill="${color}">${esc(text)}</tspan>` : '');
+  const line = (spans) => `<text class="mono" x="${x}" y="${n(y)}" font-size="${t.size}">${spans}</text>`;
+  const prompt = (cmd) => span('#9DBB88', `${handle}@github`) + span('#8D958C', ':') + span('#8FB3D9', session.dir) + span('#8D958C', '$') + span('#EDE8DA', ` ${cmd}`);
 
-  const artTop = y;
-  art.forEach((line, i) => {
-    let spans = '';
-    let run = '';
-    let color = null;
-    for (const ch of line + '\n') {
-      const c = ch === ' ' || ch === '\n' ? color : artColor(ch);
-      if (ch === '\n' || c !== color) {
-        if (run) spans += `<tspan fill="${color}">${esc(run)}</tspan>`;
-        run = '';
-        color = c;
-      }
-      if (ch !== '\n') run += ch;
-    }
-    out.push(`<text class="mono" x="${x}" y="${n(artTop + i * t.lead)}" font-size="${t.size}">${spans}</text>`);
-  });
-
-  const factsX = t.stacked ? x : x + (art[0].length + 3) * cw;
-  const factsTop = t.stacked ? artTop + (art.length + 0.6) * t.lead : artTop + t.lead;
-  facts.forEach(([key, value], i) => {
-    const fy = n(factsTop + i * t.lead);
+  out.push(line(prompt(session.command)));
+  y += t.lead * 1.4;
+  for (const text of session.lines) {
+    const [, graph, hash, ref, type, message] = text.match(/^([*|\\/ ]+?)(?:([0-9a-f]{7}) (?:(\(\w+\)) )?(\w+)(: .*))?$/);
     out.push(
-      `<text class="mono" x="${n(factsX)}" y="${fy}" font-size="${t.size}" style="fill:#DDA94B">${esc(key)}</text>` +
-        `<text class="mono" x="${n(factsX + 10 * cw)}" y="${fy}" font-size="${t.size}" style="fill:#EDE8DA">${esc(value)}</text>`,
+      line(span('#A9A2CC', graph) + span('#DDA94B', hash) + span('#7FC4B4', ref ? ` ${ref}` : '') + span('#9DBB88', hash ? ` ${type}` : '') + span('#EDE8DA', message)),
     );
-  });
-
-  y = (t.stacked ? factsTop + facts.length * t.lead : artTop + art.length * t.lead) + t.lead * 0.5;
-  out.push(prompt(''));
-  out.push(`<rect class="cursor" x="${n(x + (handle.length + 11) * cw)}" y="${n(y - t.size * 0.86)}" width="${n(cw)}" height="${n(t.size * 1.1)}" fill="#EDE8DA"/>`);
+    y += t.lead;
+  }
+  y += t.lead * 0.4;
+  out.push(line(prompt('')));
+  const promptLength = handle.length + '@github:'.length + session.dir.length + 2;
+  out.push(`<rect class="cursor" x="${n(x + promptLength * cw)}" y="${n(y - t.size * 0.86)}" width="${n(cw)}" height="${n(t.size * 1.1)}" fill="#EDE8DA"/>`);
   return out.join('\n');
 }
 
 // How tall the terminal needs to be for its content.
-const terminalHeight = (t) => {
-  const rows = 1.5 + art.length + (t.stacked ? 0.6 + facts.length : 0) + 0.5;
-  return Math.round(t.bar + t.pad + t.size * 0.8 + rows * t.lead + t.pad);
-};
+const terminalHeight = (t) => Math.round(t.bar + t.pad + t.size * 0.8 + (1.4 + session.lines.length + 0.4) * t.lead + t.pad);
 
 // ----------------------------------------------------------------- window
 
@@ -405,10 +378,10 @@ function page(layout) {
   const description =
     `${name}. ${tagline.join(' ')} ` +
     groups.map((g) => `${g.name}: ${g.skills.map(([label]) => label).join(', ')}.`).join(' ') +
-    ` A terminal window lists: ${facts.map(([k, v]) => `${k}, ${v}`).join('; ')}.`;
+    ` A terminal window shows a git log of the landscape: ${session.lines.filter((l) => l.includes(':')).map((l) => l.replace(/^[^a-z]*[0-9a-f]{7} (\(\w+\) )?/, '')).join('; ')}.`;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-labelledby="title desc">
-<title id="title">${esc(name)}: skills and a short about, in two windows over a landscape</title>
+<title id="title">${esc(name)}: skills, and a terminal, in two windows over a landscape</title>
 <desc id="desc">${esc(description)}</desc>
 <style>
 ${fonts('syne-800', 'instrument-sans-500', 'dm-mono-400')}${theme}
@@ -448,12 +421,12 @@ function wide() {
   win.h = gridY - win.y + (rows - 1) * pitch + 56 + 30 + 46;
   win.bottom = 104;
   // the terminal overlaps the bottom edge of the skills window, like a second window on a desktop
-  const term = { x: 250, y: win.y + win.h - 22, w: 878, bar: 42, r: 16, pad: 28, size: 17, lead: 26, stacked: false };
+  const term = { x: 500, y: win.y + win.h - 22, w: 628, bar: 42, r: 16, pad: 28, size: 17, lead: 27 };
   term.h = terminalHeight(term);
   const height = term.y + term.h + win.bottom;
   return {
     seed: 11, width: 1200, height, radius: 22, win, term,
-    fox: { x: 104, y: height - 106, size: 0.5 },
+    fox: { x: 236, y: height - 112, size: 0.62 },
     pad: 40, cols: 8, gutter: 0, tile: 56, pitch, gridY, label: 15.5, small: 15,
     nameSize: 56, nameY: win.y + 124,
     tagline: [tagline.join(' ')], taglineY: win.y + 162, taglineSize: 19.5, taglineLead: 0,
@@ -467,7 +440,7 @@ function narrow() {
   const rows = 10;
   win.h = gridY - win.y + (rows - 1) * pitch + 62 + 34 + 26;
   win.bottom = 96;
-  const term = { x: 20, y: win.y + win.h + 18, w: 560, bar: 42, r: 16, pad: 24, size: 17, lead: 26, stacked: true };
+  const term = { x: 20, y: win.y + win.h + 18, w: 560, bar: 42, r: 16, pad: 24, size: 16, lead: 27 };
   term.h = terminalHeight(term);
   const height = term.y + term.h + win.bottom;
   return {
