@@ -3,18 +3,15 @@
 //   assets/profile-wide.svg    desktop
 //   assets/profile-narrow.svg  phones
 //   assets/link-*.svg          the link buttons under it
-//   assets/postcard.svg        the puzzle picture, and assets/tile-*.svg its pieces
-//   play/*.md                  one page per state of the puzzle
-// It also refreshes the starting board inside README.md.
 //
 // Edit the content below, then run: node scripts/build.mjs
 // No dependencies. Fonts, icons and the grain texture are embedded in each
 // SVG, because an SVG shown through <img> cannot load anything from outside.
 //
 // Icons: Simple Icons (CC0) for brands, Phosphor (MIT) for the generic ones.
-// Fonts: Syne and Instrument Sans (SIL Open Font License, see assets/fonts).
+// Fonts: Syne, Instrument Sans and DM Mono (SIL Open Font License, see assets/fonts).
 
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { deflateSync } from 'node:zlib';
 
 const repo = new URL('..', import.meta.url);
@@ -26,6 +23,28 @@ const font = (file) => readFileSync(new URL(`assets/fonts/${file}.woff2`, repo))
 const name = 'Rishikesh S';
 const handle = 'rkeshs';
 const tagline = ['Full-stack engineer.', 'TypeScript, fast backends, practical AI workflows.'];
+
+// The terminal window: a few plain facts, next to an ASCII hillside.
+const facts = [
+  ['role', 'full-stack engineer'],
+  ['based in', 'india'],
+  ['likes', 'reliable software, clean dev workflows'],
+  ['ships', 'products that survive real users'],
+  ['editor', 'zed'],
+  ['ask me', 'system design, ai agents, why typescript'],
+  ['site', 'rishikeshs.net'],
+];
+const art = [
+  '     .       *        .   ',
+  '  *      /\\       .       ',
+  '        /  \\         *    ',
+  '   /\\  /    \\    /\\       ',
+  '  /  \\/      \\  /  \\      ',
+  ' /    \\       \\/    \\     ',
+  '/      \\      /      \\    ',
+  '  ^  ^   ^  ^    ^  ^   ^ ',
+  ' ^^^^^^ ^^^^^^  ^^^^^ ^^^^',
+];
 
 // Each group has its own tile colour. [label, icon key in scripts/icons.json]
 const groups = [
@@ -119,7 +138,7 @@ const icon = (key, cx, cy, size) => {
 const fonts = (...files) =>
   files
     .map((f) => {
-      const family = f.startsWith('syne') ? 'Syne' : 'Instrument Sans';
+      const family = f.startsWith('syne') ? 'Syne' : f.startsWith('dm-mono') ? 'DM Mono' : 'Instrument Sans';
       return `@font-face{font-family:"${family}";font-weight:${f.slice(-3)};src:url(data:font/woff2;base64,${font(f)}) format("woff2")}`;
     })
     .join('\n');
@@ -130,17 +149,32 @@ svg{
 --sky1:#9FB2CC;--sky2:#E6C3A5;--sky3:#F7E4C6;--sun:#FFF6DC;--glow:#FFD79A;--cloud:#FFF3E2;
 --h1:#A7B3C6;--h2:#8E9FB3;--h3:#7A9296;--h4:#74875F;--h5:#8E8C52;--h6:#55643B;--tree:#35432E;--haze:#F4E3C9;
 --stars:0;--birds:.55;--grain:.95;
---win:#FBFAF6;--bar:#F3F1EC;--line:#E2DED5;--dot:#D2CEC4;--ink:#1F2421;--soft:#666C66;--shadow:#3A2A14}
+--win:#FBFAF6;--bar:#F3F1EC;--line:#E2DED5;--dot:#D2CEC4;--ink:#1F2421;--soft:#666C66;--shadow:#3A2A14;
+--term:#1A1F1C;--termbar:#232926;--termline:#343B36}
 @media (prefers-color-scheme:dark){svg{
 --sky1:#070B1E;--sky2:#172048;--sky3:#3B3D75;--sun:#F3ECD6;--glow:#8E93D6;--cloud:#5A62A0;
 --h1:#343F78;--h2:#283264;--h3:#1E2750;--h4:#171E40;--h5:#111730;--h6:#0B1024;--tree:#060916;--haze:#2F356E;
 --stars:1;--birds:0;--grain:.7;
---win:#15181F;--bar:#1B1F28;--line:#2A2F3B;--dot:#3A404E;--ink:#ECEEF2;--soft:#9BA2AF;--shadow:#000000}}
+--win:#15181F;--bar:#1B1F28;--line:#2A2F3B;--dot:#3A404E;--ink:#ECEEF2;--soft:#9BA2AF;--shadow:#000000;
+--term:#0D1015;--termbar:#141820;--termline:#262B37}}
 text{font-family:"Instrument Sans","Helvetica Neue",Arial,sans-serif;font-weight:500;fill:var(--ink)}
 .soft{fill:var(--soft)}
 .glyph{fill:#FFF8EC}`;
 
 // -------------------------------------------------------------- landscape
+
+const fox = (x, y, size) => `<g transform="translate(${x} ${y}) scale(${size})">
+<ellipse cx="108" cy="114" rx="78" ry="5" fill="#1F2A1A" opacity=".4"/>
+<g class="tail"><path d="M142 62C168 44 200 48 212 70C198 80 172 84 146 80Z" fill="#C4623A"/><path d="M192 55C203 57 210 63 212 70C205 75 196 76 188 74C194 68 195 61 192 55Z" fill="#F6E7CF"/></g>
+<path d="M128 84L121 112M141 82L147 112" stroke="#3A2418" stroke-width="6.5" stroke-linecap="round"/>
+<path d="M60 60C70 40 130 38 150 58C158 70 150 88 130 90L80 90C66 90 56 76 60 60Z" fill="#CE6B3F"/>
+<path d="M79 86L70 112M92 88L94 112" stroke="#3A2418" stroke-width="6.5" stroke-linecap="round"/>
+<path d="M56 74L72 66L80 90L66 90Z" fill="#F6E7CF"/>
+<path d="M74 46L63 20L53 38L42 24L41 46L16 64L23 70L58 76Z" fill="#CE6B3F"/>
+<path d="M63 20L58 30L66 32ZM42 24L42 34L48 33Z" fill="#3A2418"/>
+<path d="M16 64L23 70L40 68L30 60Z" fill="#F6E7CF"/>
+<circle cx="18.5" cy="65" r="3" fill="#3A2418"/><circle cx="42" cy="51" r="2.6" fill="#2A1A12"/>
+</g>`;
 
 // One conifer as a path: a thin trunk and six ragged tiers.
 function pineShape(rand, x, base, h) {
@@ -161,7 +195,8 @@ function pineShape(rand, x, base, h) {
   return `${d}L${n(x + 1.5)} ${n(base - h * 0.06)}V${n(base + 4)}Z`;
 }
 
-function landscape({ width, height, win }, rand) {
+function landscape(layout, rand) {
+  const { width, height, win } = layout;
   const out = [];
   const defs = [];
 
@@ -247,6 +282,8 @@ function landscape({ width, height, win }, rand) {
     }
   }
 
+  if (layout.fox) out.push(fox(layout.fox.x, layout.fox.y, layout.fox.size));
+
   // grain over everything
   defs.push(
     `<pattern id="grain" width="208" height="208" patternUnits="userSpaceOnUse"><image width="208" height="208" href="data:image/png;base64,${grain}"/></pattern>`,
@@ -255,6 +292,70 @@ function landscape({ width, height, win }, rand) {
 
   return { defs: defs.join(''), body: out.join('\n') };
 }
+
+// --------------------------------------------------------------- terminal
+
+const artColor = (ch) => (ch === '^' ? '#86A872' : ch === '*' || ch === '.' ? '#F1DFA0' : '#A9A2CC');
+
+function terminal(t) {
+  const out = [];
+  const cw = t.size * 0.6; // DM Mono is 0.6em wide
+  for (let i = 6; i >= 1; i--) {
+    out.push(`<rect x="${t.x - i * 2}" y="${t.y - i * 2 + 10}" width="${t.w + i * 4}" height="${t.h + i * 4}" rx="${t.r + i * 2}" style="fill:var(--shadow)" opacity=".05"/>`);
+  }
+  out.push(`<rect x="${t.x}" y="${t.y}" width="${t.w}" height="${t.h}" rx="${t.r}" style="fill:var(--term)"/>`);
+  out.push(
+    `<path d="M${t.x} ${t.y + t.bar}v${-(t.bar - t.r)}a${t.r} ${t.r} 0 0 1 ${t.r} ${-t.r}h${t.w - t.r * 2}a${t.r} ${t.r} 0 0 1 ${t.r} ${t.r}v${t.bar - t.r}z" style="fill:var(--termbar)"/>`,
+  );
+  out.push(`<rect x="${t.x + 0.5}" y="${t.y + 0.5}" width="${t.w - 1}" height="${t.h - 1}" rx="${t.r}" fill="none" style="stroke:var(--termline)"/>`);
+  for (let i = 0; i < 3; i++) out.push(`<circle cx="${t.x + 24 + i * 21}" cy="${t.y + t.bar / 2}" r="6.5" fill="#4A524C"/>`);
+  out.push(`<text class="mono" x="${t.x + t.w / 2}" y="${t.y + t.bar / 2 + 5}" font-size="${t.size - 2}" text-anchor="middle" style="fill:#8D958C">about</text>`);
+
+  const x = t.x + t.pad;
+  let y = t.y + t.bar + t.pad + t.size * 0.8;
+  const prompt = (cmd) =>
+    `<text class="mono" x="${x}" y="${n(y)}" font-size="${t.size}"><tspan fill="#9DBB88">${esc(handle)}@github</tspan><tspan fill="#8D958C">:~$</tspan><tspan fill="#EDE8DA"> ${esc(cmd)}</tspan></text>`;
+  out.push(prompt('about'));
+  y += t.lead * 1.5;
+
+  const artTop = y;
+  art.forEach((line, i) => {
+    let spans = '';
+    let run = '';
+    let color = null;
+    for (const ch of line + '\n') {
+      const c = ch === ' ' || ch === '\n' ? color : artColor(ch);
+      if (ch === '\n' || c !== color) {
+        if (run) spans += `<tspan fill="${color}">${esc(run)}</tspan>`;
+        run = '';
+        color = c;
+      }
+      if (ch !== '\n') run += ch;
+    }
+    out.push(`<text class="mono" x="${x}" y="${n(artTop + i * t.lead)}" font-size="${t.size}">${spans}</text>`);
+  });
+
+  const factsX = t.stacked ? x : x + (art[0].length + 3) * cw;
+  const factsTop = t.stacked ? artTop + (art.length + 0.6) * t.lead : artTop + t.lead;
+  facts.forEach(([key, value], i) => {
+    const fy = n(factsTop + i * t.lead);
+    out.push(
+      `<text class="mono" x="${n(factsX)}" y="${fy}" font-size="${t.size}" style="fill:#DDA94B">${esc(key)}</text>` +
+        `<text class="mono" x="${n(factsX + 10 * cw)}" y="${fy}" font-size="${t.size}" style="fill:#EDE8DA">${esc(value)}</text>`,
+    );
+  });
+
+  y = (t.stacked ? factsTop + facts.length * t.lead : artTop + art.length * t.lead) + t.lead * 0.5;
+  out.push(prompt(''));
+  out.push(`<rect class="cursor" x="${n(x + (handle.length + 11) * cw)}" y="${n(y - t.size * 0.86)}" width="${n(cw)}" height="${n(t.size * 1.1)}" fill="#EDE8DA"/>`);
+  return out.join('\n');
+}
+
+// How tall the terminal needs to be for its content.
+const terminalHeight = (t) => {
+  const rows = 1.5 + art.length + (t.stacked ? 0.6 + facts.length : 0) + 0.5;
+  return Math.round(t.bar + t.pad + t.size * 0.8 + rows * t.lead + t.pad);
+};
 
 // ----------------------------------------------------------------- window
 
@@ -299,14 +400,24 @@ function page(layout) {
     );
   });
 
-  const description = `${name}. ${tagline.join(' ')} ` + groups.map((g) => `${g.name}: ${g.skills.map(([label]) => label).join(', ')}.`).join(' ');
+  out.push(terminal(layout.term));
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-labelledby="title desc">
-<title id="title">${esc(name)}: skills, in a window over a landscape</title>
+  const description =
+    `${name}. ${tagline.join(' ')} ` +
+    groups.map((g) => `${g.name}: ${g.skills.map(([label]) => label).join(', ')}.`).join(' ') +
+    ` A terminal window lists: ${facts.map(([k, v]) => `${k}, ${v}`).join('; ')}.`;
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-labelledby="title desc">
+<title id="title">${esc(name)}: skills and a short about, in two windows over a landscape</title>
 <desc id="desc">${esc(description)}</desc>
 <style>
-${fonts('syne-800', 'instrument-sans-500')}${theme}
+${fonts('syne-800', 'instrument-sans-500', 'dm-mono-400')}${theme}
 .name{font-family:"Syne","Arial Black","Helvetica Neue",Arial,sans-serif;font-weight:800;letter-spacing:-.01em}
+.mono{font-family:"DM Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:400;white-space:pre}
+.cursor{animation:blink 1.1s steps(1) infinite}
+.tail{transform-box:fill-box;transform-origin:0 60%;animation:sway 3.6s ease-in-out infinite alternate}
+@keyframes blink{50%{opacity:0}}
+@keyframes sway{from{transform:rotate(-5deg)}to{transform:rotate(6deg)}}
 .stars{opacity:var(--stars)}
 .birds{opacity:var(--birds);animation:fly 80s linear infinite}
 .drift1{animation:drift 70s ease-in-out infinite alternate}
@@ -334,10 +445,15 @@ function wide() {
   const gridY = win.y + 204;
   const pitch = 104;
   const rows = 5;
-  win.h = gridY - win.y + (rows - 1) * pitch + 56 + 30 + 30;
+  win.h = gridY - win.y + (rows - 1) * pitch + 56 + 30 + 46;
   win.bottom = 104;
+  // the terminal overlaps the bottom edge of the skills window, like a second window on a desktop
+  const term = { x: 250, y: win.y + win.h - 22, w: 878, bar: 42, r: 16, pad: 28, size: 17, lead: 26, stacked: false };
+  term.h = terminalHeight(term);
+  const height = term.y + term.h + win.bottom;
   return {
-    seed: 11, width: 1200, height: win.y + win.h + win.bottom, radius: 22, win,
+    seed: 11, width: 1200, height, radius: 22, win, term,
+    fox: { x: 104, y: height - 106, size: 0.5 },
     pad: 40, cols: 8, gutter: 0, tile: 56, pitch, gridY, label: 15.5, small: 15,
     nameSize: 56, nameY: win.y + 124,
     tagline: [tagline.join(' ')], taglineY: win.y + 162, taglineSize: 19.5, taglineLead: 0,
@@ -350,9 +466,13 @@ function narrow() {
   const pitch = 118;
   const rows = 10;
   win.h = gridY - win.y + (rows - 1) * pitch + 62 + 34 + 26;
-  win.bottom = 84;
+  win.bottom = 96;
+  const term = { x: 20, y: win.y + win.h + 18, w: 560, bar: 42, r: 16, pad: 24, size: 17, lead: 26, stacked: true };
+  term.h = terminalHeight(term);
+  const height = term.y + term.h + win.bottom;
   return {
-    seed: 5, width: 600, height: win.y + win.h + win.bottom, radius: 20, win,
+    seed: 5, width: 600, height, radius: 20, win, term,
+    fox: { x: 430, y: height - 100, size: 0.46 },
     pad: 26, cols: 4, gutter: 0, tile: 62, pitch, gridY, label: 18, small: 16,
     nameSize: 52, nameY: win.y + 118,
     tagline, taglineY: win.y + 154, taglineSize: 19.5, taglineLead: 27,
@@ -376,266 +496,6 @@ ${icon(key, 24, 24, 16)}
 `;
 }
 
-// -------------------------------------------------------------- the puzzle
-// A sliding puzzle that works on GitHub without scripts: the picture below is
-// cut into six tiles, each tile is an image link, and every state of the
-// puzzle is its own page in play/. Clicking a tile next to the gap opens the
-// page where that tile has moved.
-
-const W = 1200;
-const H = 800;
-const COLS = 3;
-const ROWS = 2;
-const TILE = W / COLS;
-
-// A ridge line as a filled path down to the bottom edge, plus its height function.
-function hill(rand, { base, amp, teeth = 0, step = 6, len = 300 }) {
-  const waves = [0, 1, 2].map((k) => ({ len: (len * (0.7 + rand() * 0.6)) / (k * 1.7 + 1), phase: rand() * 7, gain: [0.62, 0.28, 0.1][k] }));
-  const y = (x) => base + amp * waves.reduce((sum, w) => sum + w.gain * Math.sin(x / w.len + w.phase), 0);
-  let d = `M0 ${H}L0 ${n(y(0))}`;
-  for (let x = step; x <= W + step; x += step) {
-    d += teeth ? `L${n(x - step / 2)} ${n(y(x) - teeth * (0.35 + rand() * 0.65))}L${n(x)} ${n(y(x))}` : `L${n(x)} ${n(y(x))}`;
-  }
-  return { d: `${d}L${W} ${H}Z`, y };
-}
-
-const grad = (id, stops, y1 = 0, y2 = H) =>
-  `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="0" y1="${y1}" x2="0" y2="${y2}">${stops.map(([o, c, a = 1]) => `<stop offset="${o}" stop-color="${c}" stop-opacity="${a}"/>`).join('')}</linearGradient>`;
-const halo = (id, color, alpha = 0.9) =>
-  `<radialGradient id="${id}"><stop offset="0" stop-color="${color}" stop-opacity="${alpha}"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></radialGradient>`;
-
-const fox = (x, y, size) => `<g transform="translate(${x} ${y}) scale(${size})">
-<ellipse cx="108" cy="114" rx="78" ry="5" fill="#1F2A1A" opacity=".4"/>
-<g class="tail"><path d="M142 62C168 44 200 48 212 70C198 80 172 84 146 80Z" fill="#C4623A"/><path d="M192 55C203 57 210 63 212 70C205 75 196 76 188 74C194 68 195 61 192 55Z" fill="#F6E7CF"/></g>
-<path d="M128 84L121 112M141 82L147 112" stroke="#3A2418" stroke-width="6.5" stroke-linecap="round"/>
-<path d="M60 60C70 40 130 38 150 58C158 70 150 88 130 90L80 90C66 90 56 76 60 60Z" fill="#CE6B3F"/>
-<path d="M79 86L70 112M92 88L94 112" stroke="#3A2418" stroke-width="6.5" stroke-linecap="round"/>
-<path d="M56 74L72 66L80 90L66 90Z" fill="#F6E7CF"/>
-<path d="M74 46L63 20L53 38L42 24L41 46L16 64L23 70L58 76Z" fill="#CE6B3F"/>
-<path d="M63 20L58 30L66 32ZM42 24L42 34L48 33Z" fill="#3A2418"/>
-<path d="M16 64L23 70L40 68L30 60Z" fill="#F6E7CF"/>
-<circle cx="18.5" cy="65" r="3" fill="#3A2418"/><circle cx="42" cy="51" r="2.6" fill="#2A1A12"/>
-</g>`;
-
-// Dusk: a moon and pines, a peak with a cairn, birds, a campfire, a fox, and a lake.
-// Each of the six tiles gets something of its own to recognise it by.
-function postcard() {
-  const rand = random(64);
-  const defs =
-    grad('sky', [[0, '#343A78'], [0.3, '#A9638A'], [0.47, '#F2A56B'], [0.56, '#FFDB98']]) +
-    halo('glow', '#FFD08A', 0.95) +
-    halo('moonlight', '#B9B4E6', 0.5) +
-    halo('firelight', '#FF8A3A', 0.62) +
-    halo('puff', '#FFD9B0', 0.7) +
-    grad('water', [[0, '#FBDDA8'], [0.45, '#D79E93'], [1, '#6C7CA8']], 470, 690) +
-    grad('meadow', [[0, '#75804E'], [1, '#2C3A25']], 520, H) +
-    grad('peak', [[0, '#7A6397'], [1, '#57507F']], 190, 480);
-  let body = `<rect width="${W}" height="${H}" fill="url(#sky)"/>`;
-
-  const stars = ['', ''];
-  for (let i = 0; i < 70; i++) stars[i % 2] += `<circle cx="${n(rand() * W)}" cy="${n(rand() * 240)}" r="${n(0.8 + rand() * 1.3)}"/>`;
-  body += `<g fill="#F6EFD9"><g class="tw1">${stars[0]}</g><g class="tw2">${stars[1]}</g></g>`;
-  body += `<circle cx="150" cy="112" r="130" fill="url(#moonlight)"/><circle cx="150" cy="112" r="25" fill="#F6EFD9"/>`;
-
-  const sun = { x: 990, y: 386 };
-  body += `<circle cx="${sun.x}" cy="${sun.y}" r="340" fill="url(#glow)"/><circle cx="${sun.x}" cy="${sun.y}" r="46" fill="#FFF3CC"/>`;
-  for (let i = 0; i < 10; i++) {
-    body += `<ellipse cx="${n(700 + rand() * 480)}" cy="${n(180 + rand() * 90)}" rx="${n(80 + rand() * 90)}" ry="${n(11 + rand() * 11)}" fill="url(#puff)"/>`;
-  }
-  const bird = (x, y, w) => `M${x} ${y}q${w / 2} ${-w / 2} ${w} 0q${w / 2} ${-w / 2} ${w} 0`;
-  body += `<path class="birds" d="${bird(905, 118, 13)}${bird(950, 142, 10)}${bird(876, 150, 9)}" fill="none" stroke="#3B2F52" stroke-width="2.4" stroke-linecap="round"/>`;
-
-  // the peak and its cairn
-  body += `<path d="M320 490L462 332L516 356L590 198L642 264L692 242L806 404L890 490Z" fill="url(#peak)"/>`;
-  body += `<path d="M590 198L642 264L692 242L806 404L890 490L770 490L706 384L650 330Z" fill="#E79C8B" opacity=".55"/>`;
-  body += `<g fill="#3A2F55"><ellipse cx="590" cy="195" rx="15" ry="6.5"/><ellipse cx="590" cy="184" rx="11" ry="5.5"/><ellipse cx="591" cy="175" rx="8" ry="4.5"/><ellipse cx="590" cy="167.5" rx="5" ry="3.5"/></g>`;
-
-  body += `<path d="${hill(rand, { base: 456, amp: 16, step: 12 }).d}" fill="#7B6B99"/>`;
-  const forest = hill(rand, { base: 482, amp: 10, teeth: 7 });
-  body += `<path d="${forest.d}" fill="#46505A"/>`;
-  let back = '';
-  for (let i = 0; i < 26; i++) {
-    const x = 350 + rand() * 430;
-    back += pineShape(rand, x, forest.y(x) + 26, 34 + rand() * 46);
-  }
-  body += `<path d="${back}" fill="#3A463F"/>`;
-
-  // the lake, the sun's path across it, and a stone skipping away
-  body += `<path d="M690 506C820 480 1040 474 1200 482L1200 720L690 720Z" fill="url(#water)"/>`;
-  const streak = ['', ''];
-  for (let i = 0; i < 14; i++) {
-    streak[i % 2] += `<ellipse cx="${n(sun.x + (rand() - 0.5) * 24)}" cy="${494 + i * 12}" rx="${n(82 - i * 4 + rand() * 14)}" ry="2.6" fill="#FFF3CF" opacity="${n(0.85 - i * 0.04)}"/>`;
-  }
-  body += `<g class="sh1">${streak[0]}</g><g class="sh2">${streak[1]}</g>`;
-  for (let i = 0; i < 30; i++) {
-    body += `<rect x="${n(720 + rand() * 440)}" y="${n(500 + rand() * 160)}" width="${n(26 + rand() * 80)}" height="1.8" fill="#FFFFFF" opacity="${n(0.12 + rand() * 0.16)}"/>`;
-  }
-  for (let i = 0; i < 5; i++) {
-    const t = i / 4;
-    body += `<ellipse class="ring" style="animation-delay:${n(i * 0.5)}s" cx="${n(880 + t * 150)}" cy="${n(650 - Math.sqrt(t) * 128)}" rx="${n(34 - t * 24)}" ry="${n(9 - t * 6)}" fill="none" stroke="#FFF8E6" stroke-width="${n(2.6 - t * 1.3)}"/>`;
-  }
-
-  // the meadow, falling away to the shore on the right
-  const ground = (x) => {
-    const t = Math.min(1, Math.max(0, (x - 600) / 520));
-    return 540 + 9 * Math.sin(x / 170 + 1) + t * t * (3 - 2 * t) * 150;
-  };
-  let meadow = `M0 ${H}L0 ${n(ground(0))}`;
-  for (let x = 4; x <= W + 4; x += 4) meadow += `L${x - 2} ${n(ground(x) - 2 - rand() * 4)}L${x} ${n(ground(x))}`;
-  let reeds = '';
-  for (let i = 0; i < 60; i++) {
-    const x = 720 + rand() * 470;
-    reeds += `M${n(x)} ${n(ground(x) + 2)}l${n((rand() - 0.5) * 9)} ${n(-14 - rand() * 24)}`;
-  }
-  body += `<path d="${reeds}" stroke="#39472C" stroke-width="1.8" fill="none"/><path d="${meadow}L${W} ${H}Z" fill="url(#meadow)"/>`;
-  let tufts = '';
-  for (let i = 0; i < 190; i++) {
-    const x = rand() * W;
-    const y = ground(x) + 16 + rand() * (H - ground(x) - 20);
-    tufts += `M${n(x)} ${n(y)}l-3 -9M${n(x)} ${n(y)}l1 -11M${n(x)} ${n(y)}l4 -8`;
-  }
-  body += `<path d="${tufts}" stroke="#98A066" stroke-width="1.4" fill="none" opacity=".5"/>`;
-  for (let i = 0; i < 34; i++) {
-    const x = 300 + rand() * 880;
-    body += `<circle cx="${n(x)}" cy="${n(ground(x) + 18 + rand() * (H - ground(x) - 30))}" r="${n(1.8 + rand())}" fill="#F7E7C2" opacity=".85"/>`;
-  }
-
-  // tall pines on the left, a couple on the right
-  let pines = '';
-  for (const [x, h] of [[20, 440], [78, 300], [132, 390], [200, 250], [268, 335], [334, 190], [1152, 270], [1190, 190]]) {
-    pines += pineShape(rand, x, ground(x) + 8, h * (0.94 + rand() * 0.12));
-  }
-  body += `<path d="${pines}" fill="#1C2720"/>`;
-
-  // a rock, and a fire in its shelter
-  const fire = { x: 222, y: 716 };
-  body += `<circle cx="${fire.x}" cy="${fire.y - 12}" r="250" fill="url(#firelight)"/>`;
-  body += `<path d="M62 726C64 664 112 640 158 652C188 662 196 698 190 726Z" fill="#1E1B2E"/><path d="M190 726C196 698 188 662 158 652C172 670 174 700 170 726Z" fill="#E07A40" opacity=".65"/>`;
-  body += `<g fill="#2A1810"><rect x="${fire.x - 44}" y="${fire.y - 4}" width="88" height="11" rx="5.5" transform="rotate(14 ${fire.x} ${fire.y})"/><rect x="${fire.x - 44}" y="${fire.y - 4}" width="88" height="11" rx="5.5" transform="rotate(-13 ${fire.x} ${fire.y})"/></g>`;
-  for (const [color, size, cls] of [['#FF6A2B', 1.2, 'f1'], ['#FFA63D', 0.86, 'f2'], ['#FFE48F', 0.5, 'f3']]) {
-    body += `<g transform="translate(${fire.x} ${fire.y + 2}) scale(${size})"><path class="${cls}" d="M0 0C-24 -10 -20 -42 0 -74C20 -42 24 -10 0 0Z" fill="${color}"/></g>`;
-  }
-  for (let i = 0; i < 9; i++) {
-    body += `<circle class="spark" style="animation-duration:${n(2.4 + rand() * 2.4)}s;animation-delay:${n(-rand() * 4)}s" cx="${n(fire.x + (rand() - 0.5) * 44)}" cy="${fire.y - 60}" r="${n(1.3 + rand())}" fill="#FFC56E"/>`;
-  }
-
-  body += fox(470, 598, 1.2);
-  body += `<rect width="${W}" height="${H}" fill="url(#grain)" opacity=".9"/>`;
-
-  const css =
-    `.tw1{animation:twinkle 5s ease-in-out infinite alternate}.tw2{animation:twinkle 7s ease-in-out infinite alternate-reverse}@keyframes twinkle{from{opacity:.3}to{opacity:1}}` +
-    `.tail{transform-box:fill-box;transform-origin:0 60%;animation:sway 3.6s ease-in-out infinite alternate}@keyframes sway{from{transform:rotate(-5deg)}to{transform:rotate(6deg)}}` +
-    `.ring{transform-box:fill-box;transform-origin:center;opacity:.6;animation:ring 7s ease-out infinite}@keyframes ring{0%{opacity:0;transform:scale(.25)}6%{opacity:.95}34%,100%{opacity:0;transform:scale(1.3)}}` +
-    `.sh1{animation:shimmer 3.2s ease-in-out infinite alternate}.sh2{animation:shimmer 4.1s ease-in-out infinite alternate-reverse}@keyframes shimmer{from{opacity:.45}to{opacity:1}}` +
-    `.f1,.f2,.f3{transform-box:fill-box;transform-origin:50% 100%}.f1{animation:flick 1.3s ease-in-out infinite alternate}.f2{animation:flick .9s ease-in-out infinite alternate-reverse}.f3{animation:flick .7s ease-in-out infinite alternate}` +
-    `@keyframes flick{from{transform:scale(1,.9) skewX(-5deg)}to{transform:scale(.94,1.12) skewX(5deg)}}` +
-    `.spark{opacity:0;animation:rise 3s ease-out infinite}@keyframes rise{0%{opacity:0;transform:translate(0,0)}15%{opacity:1}100%{opacity:0;transform:translate(14px,-130px)}}` +
-    `@media (prefers-reduced-motion:reduce){*{animation:none!important}}`;
-  return { css, defs, body };
-}
-
-const pictureAlt = 'A hillside at dusk: a moon over tall pines, a peak with a cairn, birds, a campfire by a rock, a fox in the meadow, and a lake with the sun setting over it.';
-
-// The whole picture, or one tile of it when col and row are given.
-function picture(art, col, row) {
-  const whole = col === undefined;
-  const w = whole ? W : TILE;
-  const h = whole ? H : TILE;
-  const shift = whole ? '' : ` transform="translate(${-col * TILE} ${-row * TILE})"`;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="${esc(whole ? pictureAlt : 'One piece of the picture.')}">
-<style>
-${art.css}
-</style>
-<defs><clipPath id="frame"><rect width="${w}" height="${h}" rx="${whole ? 22 : 26}"/></clipPath><pattern id="grain" width="208" height="208" patternUnits="userSpaceOnUse"><image width="208" height="208" href="data:image/png;base64,${grain}"/></pattern>${art.defs}</defs>
-<g clip-path="url(#frame)"><g${shift}>
-${art.body}
-</g></g>
-</svg>
-`;
-}
-
-const gapTile = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${TILE} ${TILE}" width="${TILE}" height="${TILE}" role="img" aria-label="The gap.">
-<rect x="8" y="8" width="${TILE - 16}" height="${TILE - 16}" rx="20" fill="none" stroke="#8B949E" stroke-opacity=".5" stroke-width="3" stroke-dasharray="10 13"/>
-</svg>
-`;
-
-// A state is six characters, one per cell, left to right and top to bottom:
-// 1 to 5 are the pieces and 0 is the gap. Solved is 123450.
-const SOLVED = '123450';
-const movesFrom = (state) => {
-  const gap = state.indexOf('0');
-  const next = [];
-  for (let cell = 0; cell < COLS * ROWS; cell++) {
-    const sameRow = Math.floor(cell / COLS) === Math.floor(gap / COLS);
-    if ((sameRow && Math.abs(cell - gap) === 1) || Math.abs(cell - gap) === COLS) {
-      const to = state.split('');
-      [to[cell], to[gap]] = [to[gap], to[cell]];
-      next.push([cell, to.join('')]);
-    }
-  }
-  return next;
-};
-
-// Every reachable state and its distance from solved.
-function allStates() {
-  const distance = new Map([[SOLVED, 0]]);
-  const queue = [SOLVED];
-  for (const state of queue) {
-    for (const [, next] of movesFrom(state)) {
-      if (!distance.has(next)) {
-        distance.set(next, distance.get(state) + 1);
-        queue.push(next);
-      }
-    }
-  }
-  return distance;
-}
-
-// The six tiles of a state as HTML. `pages` is the path to play/, `images` the path to assets/.
-function board(state, pages, images) {
-  const moves = new Map(movesFrom(state));
-  const cells = state.split('').map((piece, cell) => {
-    const src = piece === '0' ? `${images}tile-gap.svg` : `${images}tile-${piece}.svg`;
-    const alt = piece === '0' ? 'The gap.' : moves.has(cell) ? `Piece ${piece}. Click to slide it into the gap.` : `Piece ${piece}.`;
-    return `<a href="${pages}${moves.get(cell) ?? state}.md"><img src="${src}" width="32%" alt="${alt}"></a>`;
-  });
-  const rows = [];
-  for (let r = 0; r < ROWS; r++) rows.push(cells.slice(r * COLS, (r + 1) * COLS).join(' '));
-  return `<p>\n${rows.join('\n<br>\n')}\n</p>`;
-}
-
-function buildPuzzle() {
-  const art = postcard();
-  write('postcard', picture(art));
-  for (let piece = 1; piece <= 5; piece++) write(`tile-${piece}`, picture(art, (piece - 1) % COLS, Math.floor((piece - 1) / COLS)));
-  write('tile-gap', gapTile);
-
-  const distance = allStates();
-  const at = (d) => [...distance].filter(([, v]) => v === d).map(([k]) => k).sort()[0];
-  const farthest = Math.max(...distance.values());
-  const start = { easy: at(6), medium: at(12), hard: at(farthest) };
-
-  const dir = new URL('play/', repo);
-  rmSync(dir, { recursive: true, force: true });
-  mkdirSync(dir);
-  const profile = `https://github.com/${handle}`;
-  for (const [state, d] of distance) {
-    const page =
-      state === SOLVED
-        ? `<img src="../assets/postcard.svg" width="100%" alt="${pictureAlt}">\n\nSolved. Try a [harder one](${start.hard}.md), an [easier one](${start.easy}.md), or go [back to the profile](${profile}).\n`
-        : `${board(state, '', '../assets/')}\n\nClick a piece next to the gap to slide it. From here it takes at least ${d} ${d === 1 ? 'move' : 'moves'}.\n\n[Start again](${start.medium}.md), or go [back to the profile](${profile}).\n`;
-    writeFileSync(new URL(`${state}.md`, dir), page);
-  }
-  console.log(`play/  ${distance.size} pages, hardest start is ${farthest} moves`);
-
-  // README.md carries the starting board between two marker comments.
-  const readme = new URL('README.md', repo);
-  const text = readFileSync(readme, 'utf8');
-  const block = `<!-- puzzle:start -->\n${board(start.medium, 'play/', 'assets/')}\n<!-- puzzle:end -->`;
-  if (!/<!-- puzzle:start -->[\s\S]*<!-- puzzle:end -->/.test(text)) throw new Error('README.md is missing the puzzle markers');
-  writeFileSync(readme, text.replace(/<!-- puzzle:start -->[\s\S]*<!-- puzzle:end -->/, block));
-}
-
 // ------------------------------------------------------------------ write
 
 const write = (file, svg) => {
@@ -646,4 +506,3 @@ const write = (file, svg) => {
 write('profile-wide', page(wide()));
 write('profile-narrow', page(narrow()));
 for (const link of links) write(link.file, button(link));
-buildPuzzle();
