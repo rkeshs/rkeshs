@@ -28,5 +28,3 @@ I am a full-stack engineer focused on TypeScript, product systems, fast backends
 ## Get in touch
 
 Happy to chat about system design, AI agents, or why TypeScript is my go-to language. Find me at [rishikeshs.net](https://rishikeshs.net), on [LinkedIn](https://www.linkedin.com/in/rishikeshs/), or by [email](mailto:rkesh2003@gmail.com).
-
-<sub>The header is built by <code>node scripts/build.mjs</code>. Edit the layers and timings at the top of that file to change it.</sub>
