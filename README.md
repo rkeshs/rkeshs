@@ -9,73 +9,12 @@
   <a href="mailto:rkesh2003@gmail.com"><img src="assets/link-email.svg" height="40" alt="Email"></a>
 </p>
 
-<details>
-<summary><b>Go for a walk</b></summary>
-<blockquote>
+Put the picture back together. Click a piece next to the gap to slide it.
 
-A trail leaves the bottom of the hill and forks at the first pine.
-
-<details>
-<summary>Take the path into the pines</summary>
-<blockquote>
-
-The trees close in and the light turns green. Water is running somewhere to your left. Something rustles to your right.
-
-<details>
-<summary>Follow the water</summary>
-<blockquote>
-<img src="assets/walk-lake.svg" width="100%" alt="A lake in the late afternoon, hills mirrored in the water, and the rings of a skipped stone.">
-
-A lake nobody told you about. You skip a stone. Five bounces.
-
-<sub>Ending 1 of 4</sub>
-</blockquote>
-</details>
-
-<details>
-<summary>Follow the rustle</summary>
-<blockquote>
-<img src="assets/walk-fox.svg" width="100%" alt="A clearing in a pine forest at dusk, with a fox standing mid-step in the grass.">
-
-A fox, mid-step, as surprised as you are. Neither of you says anything.
-
-<sub>Ending 2 of 4</sub>
-</blockquote>
-</details>
-
-</blockquote>
-</details>
-
-<details>
-<summary>Climb toward the ridge</summary>
-<blockquote>
-
-It is steeper than it looked. Halfway up, the wind picks up.
-
-<details>
-<summary>Keep climbing</summary>
-<blockquote>
-<img src="assets/walk-summit.svg" width="100%" alt="A mountain top at sunset above a sea of clouds, with a cairn and a small figure beside it.">
-
-The top. The clouds are below you now, and the sun is on its way out.
-
-<sub>Ending 3 of 4</sub>
-</blockquote>
-</details>
-
-<details>
-<summary>Shelter behind the rocks</summary>
-<blockquote>
-<img src="assets/walk-campfire.svg" width="100%" alt="A small campfire at night beside two boulders, under a moon and a sky full of stars.">
-
-You wait out the wind, light a small fire, and stay for the stars.
-
-<sub>Ending 4 of 4</sub>
-</blockquote>
-</details>
-
-</blockquote>
-</details>
-
-</blockquote>
-</details>
+<!-- puzzle:start -->
+<p>
+<a href="play/014523.md"><img src="assets/tile-1.svg" width="32%" alt="Piece 1. Click to slide it into the gap."></a> <a href="play/104523.md"><img src="assets/tile-gap.svg" width="32%" alt="The gap."></a> <a href="play/140523.md"><img src="assets/tile-4.svg" width="32%" alt="Piece 4. Click to slide it into the gap."></a>
+<br>
+<a href="play/104523.md"><img src="assets/tile-5.svg" width="32%" alt="Piece 5."></a> <a href="play/124503.md"><img src="assets/tile-2.svg" width="32%" alt="Piece 2. Click to slide it into the gap."></a> <a href="play/104523.md"><img src="assets/tile-3.svg" width="32%" alt="Piece 3."></a>
+</p>
+<!-- puzzle:end -->
